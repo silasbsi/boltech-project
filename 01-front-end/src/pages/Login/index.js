@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserService from '../../services/userService';
+import { createBrowserHistory } from "history";
 
 import "./index.css"
 
@@ -10,13 +11,19 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    const handleSubmit = () => {        
+    const handleSubmit = (e) => {  
+        // e.preventDefault();   
+
         const payload = {
-            email: document.querySelector('#email').value,
-            password: document.querySelector('#password').value
+            email,
+            password
         }
         
-        UserService.login(payload);
+        const response = UserService.login(payload);
+        console.log(response)
+        if (response) {
+            createBrowserHistory().push('/dashboard');
+        }
         
     }
     
@@ -77,7 +84,7 @@ const Login = () => {
                 <div className="login-footer">
                     <Link to="/register">Register</Link>
                     <button 
-                        onClick={handleSubmit}
+                        onClick={(e) => handleSubmit(e)}
                         className={`login-btn 
                             ${(emailError || passwordError) ? 'disabled': ''}`
                         }

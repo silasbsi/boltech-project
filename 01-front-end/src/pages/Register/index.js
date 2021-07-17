@@ -15,15 +15,16 @@ const Register = () => {
 
     const handleSubmit = () => {        
         const payload = {
-            email: document.querySelector('#email').value,
-            password: document.querySelector('#password').value,
-            name: document.querySelector('#name').value,
+            email,
+            password,
+            name,
         }
         
-        UserService.register()
+        const response = UserService.register(payload);
 
-        createBrowserHistory().push('/');
-        
+        if (response) {
+            createBrowserHistory().push('/');
+        }
     }
     
     const validations = {

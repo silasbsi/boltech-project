@@ -1,17 +1,26 @@
-import Api from "../api/api";
-import { createBrowserHistory } from "history";
+import api from "../api";
 
 const UserService = {
-    login: (data) => {
-        console.log(data)
-        localStorage.setItem('app-token', true);
-        
-        createBrowserHistory().push('/dashboard');
+    login: async function (data) {
+        try {
+            
+            const response = await api.post('/auth/authenticate', data)
+            console.log(response)
+            if (response.status === 200) {
+                
+                localStorage.setItem('app-token', response.data.token ? true : false);
+                return response;
+            }
+            return false;
+                
+        } catch (err) {
+            console.log(err.message)
+        }
     },
 
-    isAuthenticated: () => {
+    isAuthenticated: function () {
         const isAuthenticated = localStorage.getItem('app-token');
-        console.log(isAuthenticated);
+        
         if (isAuthenticated) {
             return true;
         }
@@ -19,8 +28,17 @@ const UserService = {
         return false;
     },
 
-    register: () => {
-        console.log("Chegou no registro")
+    register: async function (data) {
+        try {
+            await api.post('/auth/register', data)
+                .then(response => {
+                    if (response.status === 200)
+                        return true;
+                });
+            
+        } catch(err) {
+            console.log(err.message)
+        }
     }
 }
 
