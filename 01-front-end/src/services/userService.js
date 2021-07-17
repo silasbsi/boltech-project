@@ -3,16 +3,17 @@ import api from "../api";
 const UserService = {
     login: async function (data) {
         try {
-            
             const response = await api.post('/auth/authenticate', data)
             console.log(response)
             if (response.status === 200) {
-                
-                localStorage.setItem('app-token', response.data.token ? true : false);
+                localStorage.setItem('app-token', response.data.token);
                 return response;
+            } else {
+                if (response.error) {
+                    console.error(response.error);
+                }
             }
             return false;
-                
         } catch (err) {
             console.log(err.message)
         }

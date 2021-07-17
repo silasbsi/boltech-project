@@ -1,7 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 const authConfig = require('../config/auth');
 
 const User = require('../models/User');
@@ -37,7 +36,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/authenticate', async (req, res) => {
     const { email, password } = req.body;
-    console.log('bodey', req.body)
+    console.log('body', req.body)
     try {
         const user = await User.findOne({ email }).select('+password');
         

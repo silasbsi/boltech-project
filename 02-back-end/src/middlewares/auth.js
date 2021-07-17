@@ -2,9 +2,8 @@ const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth');
 
 module.exports = (req, res, next) => {
-    console.log('req')
     const authHeader = req.headers.authorization;
-
+    console.log('req', req);
     if (!authHeader) {
         return res.status(401).send({ error: 'No token provided' });
     }
@@ -27,6 +26,6 @@ module.exports = (req, res, next) => {
         }
 
         req.userId = decoded.id;
-        return next()
+        return next();
     })
 }; 
