@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  outline: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: Roboto, Arial, sans-serif;
+  overflow: hidden;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+h1, h2, h3, h4 {
+  color: #424949;
+}

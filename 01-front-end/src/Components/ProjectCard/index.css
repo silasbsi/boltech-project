@@ -1,0 +1,95 @@
+.project-card {
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    width: 320px;
+    height: auto;
+    margin: 0px 20px 30px 0px;
+}
+
+.project-card .project-card-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: #F4F6F6;
+    box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    padding: 10px;
+    color: #424949;
+}
+
+.project-card .project-card-header svg {
+    margin-right: 5px;;
+}
+
+.project-card .project-card-content {
+    margin: 10px 10px 0px 10px;
+    padding-bottom: 10px;
+    box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    color: #424949;
+}
+
+.project-card .project-card-content .todo-list,
+.project-card .project-card-content .done-list {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card .project-card-content .todo-list .list-item {
+    margin: 1px 0;
+    display: flex;
+    align-items: center;
+    color: #03AAC5;
+}
+
+.project-card .project-card-content .todo-list .list-item svg {
+    font-size: 12px;
+    visibility: hidden;
+}
+
+.project-card .project-card-content .todo-list .list-item:hover svg{
+    visibility: visible;
+}
+
+.project-card .project-card-content .list-item input {
+    margin: 0 5px;
+    width: 10px;
+}
+
+.project-card .project-card-content .list-item label {
+    margin: 0 5px;
+    font-size: 12px;
+}
+
+.project-card .project-card-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.project-card .project-card-footer .new-task-input {
+    flex: 1;
+    margin-right: 20px;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #7F8C8D;
+}
+
+.project-card .project-card-footer .new-task-button {
+    width: 25%;
+    background-color: #27AE60;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.project-card .project-card-content .done-list .list-item {
+    margin: 1px 0;
+    display: flex;
+    align-items: center;
+}

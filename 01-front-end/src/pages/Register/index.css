@@ -1,0 +1,53 @@
+.register-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.register-container .register-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.register-container .register-field {
+    border: none;
+    background: rgba(0, 0, 0, .2);
+    color: white;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    width: 45vh;
+    transition: all .1s linear;
+    
+}
+
+.register-container .register-field:focus {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .5);
+    outline: none;
+}
+
+.register-container .register-field.error {
+    background-color: #ff8080;
+}
+
+.register-container .register-btn {
+    background: #0095ac;
+    color: #fdfdfd;
+    padding: .5rem 2rem;
+    border: none;
+    border-radius: 5px;
+    margin-top: 2rem;
+}
+
+.register-container .disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.45;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
