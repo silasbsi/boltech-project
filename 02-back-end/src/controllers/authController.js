@@ -15,7 +15,7 @@ function generatetoken(params = {}) {
 
 router.post('/register', async (req, res) => {
     const { email } = req.body;
-    console.log(req.body)
+
     try {
         if (await User.findOne({ email })) {
             return res.status(400).send({ error: 'User already exists'});
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/authenticate', async (req, res) => {
     const { email, password } = req.body;
-    console.log('body', req.body)
+    console.log(req.body);
     try {
         const user = await User.findOne({ email }).select('+password');
         
@@ -50,6 +50,10 @@ router.post('/authenticate', async (req, res) => {
 
         user.password = undefined;
         
+        console.log({ 
+            user, 
+            token: generatetoken({ id: user.id }) 
+        });
         return res.send({ 
             user, 
             token: generatetoken({ id: user.id }) 

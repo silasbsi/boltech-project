@@ -13,7 +13,9 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    const handleSubmit = () => {        
+    const handleSubmit = (e) => {      
+        e.preventDefault();
+
         const payload = {
             email,
             password,
@@ -22,8 +24,8 @@ const Register = () => {
         
         const response = UserService.register(payload);
 
-        if (response) {
-            createBrowserHistory().push('/');
+        if (response.user) {
+            window.location.href = "/";
         }
     }
     
@@ -66,7 +68,7 @@ const Register = () => {
 
     return (
         <div className="register-container">
-            <form className="register">
+            <form className="register" onSubmit={handleSubmit}>
                 <h1>Register</h1>
                 <div className="register-group">
                     <input
@@ -108,7 +110,7 @@ const Register = () => {
                     <Link to="/register" />
                 </div>
                 <button 
-                    onClick={handleSubmit}
+                    type="submit"
                     className={`register-btn 
                         ${(emailError || passwordError) ? 'disabled': ''}`
                     }

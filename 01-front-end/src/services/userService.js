@@ -1,19 +1,22 @@
-import api from "../api";
+const base_url = "http://localhost:3030";
 
 const UserService = {
-    login: async function (data) {
+    login: function (data) {
         try {
-            const response = await api.post('/auth/authenticate', data)
-            console.log(response)
-            if (response.status === 200) {
-                localStorage.setItem('app-token', response.data.token);
-                return response;
-            } else {
-                if (response.error) {
-                    console.error(response.error);
-                }
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", `${base_url}/auth/authenticate`, false ); // false for synchronous request
+            xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlHttp.send(JSON.stringify(data));
+
+            const response = JSON.parse(xmlHttp.responseText);
+
+            if (response.error) {
+                throw new Error({ message: response.Error } )
             }
-            return false;
+
+            localStorage.setItem('app-token', response.token);
+
+            return response;
         } catch (err) {
             console.log(err.message)
         }
@@ -29,14 +32,21 @@ const UserService = {
         return false;
     },
 
-    register: async function (data) {
+    register: function (data) {
         try {
-            await api.post('/auth/register', data)
-                .then(response => {
-                    if (response.status === 200)
-                        return true;
-                });
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", `${base_url}/auth/register`, false ); // false for synchronous request
+            xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlHttp.send(JSON.stringify(data));
+
+            const response = JSON.parse(xmlHttp.responseText);
             
+            if (response.error) {
+                throw new Error({ message: response.Error } )
+            }
+
+            return response;
+
         } catch(err) {
             console.log(err.message)
         }

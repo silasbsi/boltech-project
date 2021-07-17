@@ -2,17 +2,40 @@ import React, { useState } from 'react';
 import './index.css';
 import { IoTrashOutline } from 'react-icons/io5'
 
+import ProjectService from '../../services/projectService';
+
 import { GoPencil } from 'react-icons/go'
-const ProjectCard = () => {
+const ProjectCard = (props) => {
+    const { name } = props.project;
+    const [changeTitle, setChangeTitle] = useState(false);
     const [newTask, setNewTask] = useState('');
+    const [title, setTitle] = useState('');
+
+    const handleTitleOnBlur= () => {
+        
+        setChangeTitle(!changeTitle);
+    }
 
     return (
         <div className="project-card">
             <div className="project-card-header">
-                <a href="#">Project ABC</a>
+                {
+                    changeTitle ? 
+                        <input 
+                            className="project-card-title-input"
+                            type="text"
+                            onChange={e => setTitle(e.target.value)}
+                            value={title}
+                            placeholder={name}
+                            onBlur={handleTitleOnBlur}
+                            autoFocus={true}
+                        />
+                        :
+                        <span>{name}</span>
+                }
                 <div>
-                    <a href="/"><GoPencil /></a>
-                    <a href="/"><IoTrashOutline /></a>
+                    <GoPencil onClick={() => setChangeTitle(!changeTitle)} />
+                    <IoTrashOutline />
                 </div>
             </div>
             <div>

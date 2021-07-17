@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserService from '../../services/userService';
-import { createBrowserHistory } from "history";
 
 import "./index.css"
 
@@ -12,19 +11,18 @@ const Login = () => {
     const [passwordError, setPasswordError] = useState('');
 
     const handleSubmit = (e) => {  
-        // e.preventDefault();   
-
+        e.preventDefault();
         const payload = {
             email,
             password
         }
-        
+
         const response = UserService.login(payload);
-        console.log(response)
-        if (response) {
-            createBrowserHistory().push('/dashboard');
-        }
         
+        if (response?.user) {
+            console.log(response)
+            window.location.href = "/dashboard";
+        }
     }
     
     const validations = {
@@ -55,7 +53,7 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <form className="login">
+            <form className="login" onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 <div className="login-group">
                     <input
@@ -82,9 +80,9 @@ const Login = () => {
                     />
                 </div>
                 <div className="login-footer">
-                    <Link to="/register">Register</Link>
+                    <Link to="/register" >Register</Link>
                     <button 
-                        onClick={(e) => handleSubmit(e)}
+                        type="submit"
                         className={`login-btn 
                             ${(emailError || passwordError) ? 'disabled': ''}`
                         }

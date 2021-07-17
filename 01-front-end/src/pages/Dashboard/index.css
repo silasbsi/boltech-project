@@ -7,19 +7,17 @@
 }
 
 .dashboard-content .project-content {
-    /* border: 1px solid; */
     width: 65%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 
-    overflow-y: auto;
+    /* overflow-y: auto;
     padding: 5px;
-    height: 100vh;
+    height: 90vh; */
 }
 
 .dashboard-content .new-project {
-    /* border: 1px solid; */
     width: 33%;
     display: flex;
     justify-content: center;
@@ -52,7 +50,7 @@
 .dashboard-content .new-project .new-project-content > button {
     border: none;
     border-radius: 2px;
-    background-color: #03AAC5;;
+    background-color: #03AAC5;
     width: 80%;
     padding: 10px 10px;
     transition: all 0.2s linear;
@@ -60,5 +58,12 @@
 }
 
 .dashboard-content .new-project .new-project-content > button:hover {
-    background-color: #0095ac;;
+    background-color: #0095ac;
 }
+
+/* @media (max-width: 1026px) {
+    .dashboard-content {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+} */
