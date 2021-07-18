@@ -2,7 +2,7 @@
     box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
     width: 320px;
-    
+    height: 350px;
     margin: 0px 20px 30px 0px;
 }
 
@@ -51,9 +51,35 @@
 
 .project-card .project-card-content .todo-list,
 .project-card .project-card-content .done-list {
-    margin-left: 10px;
+    margin: 5px 0px;
+    padding: 5px 0;
     display: flex;
     flex-direction: column;
+    
+    overflow-y: auto;
+    padding: 5px;
+    height: 94px;
+}
+
+.project-card .project-card-content .done-list {
+    color: #767676;
+}
+
+.project-card .project-card-content .project-card-no-data {
+    margin: 0 4px;
+    color: #767676;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-card .project-card-content .project-card-no-data  svg{
+    font-size: 35px;
+}
+
+.project-card .project-card-content .project-card-no-data span {
+    margin-left: 8px;
 }
 
 .project-card .project-card-content .todo-list .list-item {
@@ -61,6 +87,13 @@
     display: flex;
     align-items: center;
     color: #03AAC5;
+}
+
+.project-card .project-card-content .list-item label {
+    white-space: nowrap; 
+    max-width: 200px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .project-card .project-card-content .todo-list .list-item svg {

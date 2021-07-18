@@ -17,7 +17,8 @@ const TaskSchema = new mongoose.Schema({
     },
 
     finishedDate: {
-        type: Date
+        type: Date,
+        default: null
     }
 });
 

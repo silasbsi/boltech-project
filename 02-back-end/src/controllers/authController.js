@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
             token: generatetoken({ id: user.id })
         });
     } catch (err) {
-        return res.status(400).send({ error: 'Resgistration failed' });
+        return res.status(400).send({ error: `Error resgistration failed: ${err}` });
     }
 });
 
@@ -59,7 +59,7 @@ router.post('/authenticate', async (req, res) => {
             token: generatetoken({ id: user.id }) 
         });
     } catch (err) {
-        return res.status(400).send({ error: 'Authentication failed' });
+        return res.status(400).send({ error: `Error authentication failed: ${err}` });
     }
 });
 

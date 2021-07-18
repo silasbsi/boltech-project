@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoTrashOutline } from 'react-icons/io5'
-
+import { AiOutlineDatabase } from "react-icons/ai";
+import { GoPencil } from 'react-icons/go'
 import ProjectService from '../../services/projectService';
 import TaskService from '../../services/taskService';
-
-import { GoPencil } from 'react-icons/go'
-import { useEffect } from 'react';
 
 import './index.css';
 
 const ProjectCard = (props) => {
-    const { name, _id } = props.project;
+    const { 
+        name = '', 
+        _id,
+        createdDate
+    } = props.project;
+
     const [changeTitle, setChangeTitle] = useState(false);
     const [newTaskDescription, setNewTaskDescription] = useState('');
     const [title, setTitle] = useState(name);
-    const [tasks, setTasks] = useState(null);
+    const [todoTasks, setTodoTasks] = useState(null);
+    const [doneTasks, setDonetasks] = useState(null);
 
     const handleTitleOnBlur= () => {
         const payload = {
@@ -25,7 +29,6 @@ const ProjectCard = (props) => {
         ProjectService.update(payload);
 
         setChangeTitle(!changeTitle);
-
     }
 
     const handleAddTask = () => {
@@ -37,28 +40,73 @@ const ProjectCard = (props) => {
             
             const response = TaskService.create(payload);
 
-            if (response) {
-                setTasks([...tasks, response.task])
+            if (response.task) {
+                setTodoTasks([...todoTasks, response.task])
             }
+
+            setNewTaskDescription('');
         }
     }
 
     const handleProjectDelete = (projectId) => {
         if (typeof props.deleteFunction === 'function') {
-            console.log(projectId)
             props.deleteFunction(projectId);
         }
     }
 
-    useEffect(() => {
-        // setTitle(name);
+    const handleTaskDelete = (projectId, taskId) => {
+        const payload = {
+            projectId,
+            taskId
+        };
+        
+        const response = TaskService.delete(payload);
+        
+        if (response.taskId) {
+            const remainingTasks = todoTasks?.filter(task => task._id !== response.taskId);
+            setTodoTasks(remainingTasks)
+        }
+    }
 
+    const handleCheckboxClick = (projectId, taskId) => {
+        const payload = {
+            projectId,
+            taskId
+        };
+        
+        const response = TaskService.finish(payload);
+        
+        if (response.task) {
+            const remainingTodoTasks = todoTasks?.filter(task => task._id !== response.task._id);
+            setTodoTasks(remainingTodoTasks);
+            
+            if (doneTasks) {
+                setDonetasks([...doneTasks, response.task]);
+            } else {
+                setDonetasks(response.task);
+            }
+            
+        }
+    }
+
+    useEffect(() => {
         const payload = { 
             projectId: _id
         };
         const allTasks = TaskService.all(payload);
-        // console.table(allTasks);
-        setTasks(allTasks?.tasks);
+
+        if (allTasks.tasks === undefined) {
+            setDonetasks({});
+            setTodoTasks({});
+        }
+        else {
+            const doneTasksList = allTasks?.tasks?.filter(task => task.finishedDate);
+            const todoTasksList = allTasks?.tasks?.filter(task => !task.finishedDate);
+            setDonetasks(doneTasksList);
+            setTodoTasks(todoTasksList);
+        }
+        
+        
     }, [])
 
     return (
@@ -73,10 +121,11 @@ const ProjectCard = (props) => {
                             value={title}
                             placeholder={name}
                             onBlur={handleTitleOnBlur}
+                            onent={handleTitleOnBlur}
                             autoFocus={true}
                         />
                         :
-                        <span className="project-card-title-span" title={title}>{title}</span>
+                        <span className="project-card-title-span" title={`${title} | Creation date: ${new Date(createdDate).toLocaleString("en-EN")}`}>{title}</span>
                 }
                 <div>
                     <GoPencil className="project-card-icons" onClick={() => setChangeTitle(!changeTitle)} />
@@ -86,39 +135,54 @@ const ProjectCard = (props) => {
             <div>
             <div className="project-card-content">
                 <p>To Do</p>
-
                 <div className="todo-list">
-                    {tasks ?
-                        tasks?.map(task => (
-                            <div key={task._id} className="list-item">
-                                <input type="checkbox" id={task._id} name={task._id} value={task._id} />
+                    {todoTasks?.length > 0 ?
+                        todoTasks.map(task => (
+                            <div key={task._id} className="list-item" title={`${task.description} | Creation date: ${new Date(task.createdDate).toLocaleString("en-EN")}`}>
+                                <input 
+                                    type="checkbox" 
+                                    id={task._id} 
+                                    name={task._id} 
+                                    value={task._id} 
+                                    onChange={() => handleCheckboxClick(_id, task._id)} 
+                                />
                                 <label for={task._id}>{task.description}</label>
-                                <IoTrashOutline />
+                                <IoTrashOutline onClick={() => handleTaskDelete(_id, task._id)}/>
                             </div>
                         ))
                         :
-                        <span><i>No tasks...</i></span>
+                        (
+                            <div className="project-card-no-data">
+                                <AiOutlineDatabase />
+                                <span>No tasks</span>
+                            </div>
+                        )
                     }
                 </div>  
                 <p>Done</p>
-
                 <div className="done-list">
-                    <div className="list-item">
-                        <input type="checkbox" id="01" name="01" value="01" />
-                        <label for="01">Lorem ipsum dolor sit amet</label>
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="02" name="02" value="02" />
-                        <label for="02">Lorem ipsum dolor sit amet</label>
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="03" name="03" value="03" />
-                        <label for="03">Lorem ipsum dolor sit amet</label>
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="04" name="04" value="04" />
-                        <label for="04">Lorem ipsum dolor sit amet</label>
-                    </div>
+                    {doneTasks?.length > 0 ?
+                        doneTasks.map(task => (
+                            <div key={task._id}  className="list-item" title={`${task.description} | Creation date: ${new Date(task.createdDate).toLocaleString("en-EN")} | Finish date: ${new Date(task.finishedDate).toLocaleString("en-EN")}`}>
+                                <input 
+                                    type="checkbox" 
+                                    id={task._id} 
+                                    name={task._id} 
+                                    value={task._id} 
+                                    checked 
+                                    disabled 
+                                />
+                                <label for={task._id}>{task.description}</label>
+                            </div>
+                        ))
+                        :
+                        (
+                            <div className="project-card-no-data">
+                                <AiOutlineDatabase />
+                                <span>No tasks</span>
+                            </div>
+                        )
+                    }
                 </div>  
             </div>
                 <div className="project-card-footer">

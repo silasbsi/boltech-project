@@ -35,8 +35,8 @@ const UserService = {
     register: function (data) {
         try {
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "POST", `${base_url}/auth/register`, false ); // false for synchronous request
-            xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlHttp.open('POST', `${base_url}/auth/register`, false ); // false for synchronous request
+            xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
             xmlHttp.send(JSON.stringify(data));
 
             const response = JSON.parse(xmlHttp.responseText);

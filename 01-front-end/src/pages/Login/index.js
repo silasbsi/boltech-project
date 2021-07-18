@@ -20,7 +20,6 @@ const Login = () => {
         const response = UserService.login(payload);
         
         if (response?.user) {
-            console.log(response)
             localStorage.setItem('userId', response.user._id);
             localStorage.setItem('userName', response.user.name);
             window.location.href = "/dashboard";

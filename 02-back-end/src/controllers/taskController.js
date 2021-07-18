@@ -14,39 +14,46 @@ router.post('/create', async (req, res) => {
 
         return res.send({ task });
 
-    } catch (error) {
-        return res.status(400).send({ error: 'Error creating new task' });
+    } catch (err) {
+        return res.status(400).send({ error: `Error creating new task: ${err}` });
     }
 });
 
-// router.patch('/update', async (req, res) => {
-//     const { projectId, projectTitle } = req.body;
+router.patch('/finish', async (req, res) => {
+    const { projectId, taskId } = req.body;
+    
+    try {
+        const task = await Task.findOne({ projectId, _id: taskId })
+          
+        task.finishedDate = new Date();
+        await task.save();
 
-//     try {
-//         const project = await Project.findOne({ _id: projectId })
-        
-//         project.name = projectTitle;
+        return res.send({ task });
 
-//         await project.save();
-
-//         return res.send({ project });
-
-//     } catch (error) {
-//         return res.status(400).send({ error: 'Error updating project' });
-//     }
-// });
+    } catch (err) {
+        return res.status(400).send({ error: `Error updating task: ${err}` });
+    }
+});
 
 router.get('/all', async (req, res) => {
     const { projectId } = req.query;
     try {
-        
-        console.log('projectId', projectId)
         const tasks = await Task.find({ projectId: projectId });
-        console.log('tasks', tasks)
         return res.send({ tasks });
 
-    } catch (error) {
-        return res.status(400).send({ error: 'Error selecting tasks' });
+    } catch (err) {
+        return res.status(400).send({ error: `Error selecting tasks: ${err}` });
+    }
+});
+
+router.delete('/delete', async (req, res) => {
+    const { projectId, taskId } = req.body;
+    try {
+        await Task.remove({ projectId, _id: taskId });
+        
+        return res.send({ taskId });
+    } catch (err) {
+        return res.status(400).send({ error: `Error deleting task: ${err}` });
     }
 });
 
