@@ -1,28 +1,45 @@
-import React,{ useState } from 'react';
-import { useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import Navbar from '../../Components/Navbar';
 import ProjectCard from '../../Components/ProjectCard';
 import ProjectService from '../../services/projectService'
 import './index.css';
 
-const Dashboard = (props) => {
+const Dashboard = () => {
     const [newProject, setNewProject] = useState('');
     const [projects, setProjects] = useState(null);
+    const USER_ID = localStorage.getItem('userId');
     
     const handleClick = () => {
-        const payload = {
-            name: newProject,
-            userId: "60f2ea498b011d4fcc3e8790"
+        if (newProject) {
+            const payload = {
+                name: newProject,
+                userId: USER_ID
+            }
+
+            const response = ProjectService.register(payload);
+
+            setProjects([...projects, response.project]);
         }
+    }
 
-        const response = ProjectService.register(payload);
+    const handleProjectDelete = (projectId) => {
+        const payload = {
+            projectId
+        };
+        
+        const response = ProjectService.delete(payload);
 
-        setProjects([...projects, response.project]);
+        if (response) {
+            const remainingProjects = projects.filter(project => project._id !== response.projectId);
+            setProjects(remainingProjects);
+        }
     }
 
     useEffect(()=> {
         const payload = { 
-            userId: "60f2ea498b011d4fcc3e8790" 
+            body: {
+                userId: USER_ID
+            }
         };
         const allProjects = ProjectService.all(payload);
         setProjects(allProjects.projects)
@@ -35,7 +52,7 @@ const Dashboard = (props) => {
                 <div className="project-content">
                     {
                         projects?.map(project => (
-                            <ProjectCard key={project._id} project={project}/>
+                            <ProjectCard key={project._id} project={project} deleteFunction={handleProjectDelete} />
                         ))
                     }
                 </div>

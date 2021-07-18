@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 
 const Project = require('../models/Project');
+const Task = require('../models/Task');
 
 router.use(authMiddleware);
 
@@ -37,12 +38,25 @@ router.patch('/update', async (req, res) => {
 
 router.get('/all', async (req, res) => {
     try {
-        const projects = await Project.find(req.body)
+        const projects = await Project.find({ userId: req.userId });
 
         return res.send({ projects });
 
     } catch (error) {
         return res.status(400).send({ error: 'Error selecting project' });
+    }
+});
+
+router.delete('/delete', async (req, res) => {
+    const { projectId } = req.body;
+    try {
+        console.log('delete', projectId);
+        await Project.findByIdAndRemove(projectId);
+        await Task.remove({ projectId });
+        
+        return res.send({ projectId });
+    } catch (error) {
+        return res.status(400).send({ error: 'Error deleting project' });
     }
 });
 

@@ -13,7 +13,7 @@ const ProjectCard = (props) => {
     const { name, _id } = props.project;
     const [changeTitle, setChangeTitle] = useState(false);
     const [newTaskDescription, setNewTaskDescription] = useState('');
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState(name);
     const [tasks, setTasks] = useState(null);
 
     const handleTitleOnBlur= () => {
@@ -29,26 +29,36 @@ const ProjectCard = (props) => {
     }
 
     const handleAddTask = () => {
-        const payload = {
-            projectId: _id,
-            taskDescription: newTaskDescription
-        };
-        
-        const response = TaskService.create(payload);
+        if (newTaskDescription) {
+            const payload = {
+                projectId: _id,
+                taskDescription: newTaskDescription
+            };
+            
+            const response = TaskService.create(payload);
 
-        if (response) {
-            setTasks([...tasks, response.task])
+            if (response) {
+                setTasks([...tasks, response.task])
+            }
         }
     }
 
+    const handleProjectDelete = (projectId) => {
+        if (typeof props.deleteFunction === 'function') {
+            console.log(projectId)
+            props.deleteFunction(projectId);
+        }
+    }
 
     useEffect(() => {
-        setTitle(name);
+        // setTitle(name);
 
-        const payload = { projectId: _id};
-        const allTasks = TaskService.all(payload)
-        console.table(allTasks.tasks);
-        setTasks(allTasks.tasks);
+        const payload = { 
+            projectId: _id
+        };
+        const allTasks = TaskService.all(payload);
+        // console.table(allTasks);
+        setTasks(allTasks?.tasks);
     }, [])
 
     return (
@@ -70,7 +80,7 @@ const ProjectCard = (props) => {
                 }
                 <div>
                     <GoPencil className="project-card-icons" onClick={() => setChangeTitle(!changeTitle)} />
-                    <IoTrashOutline className="project-card-icons" />
+                    <IoTrashOutline className="project-card-icons" onClick={() => handleProjectDelete(_id)} />
                 </div>
             </div>
             <div>
@@ -78,7 +88,7 @@ const ProjectCard = (props) => {
                 <p>To Do</p>
 
                 <div className="todo-list">
-                    {
+                    {tasks ?
                         tasks?.map(task => (
                             <div key={task._id} className="list-item">
                                 <input type="checkbox" id={task._id} name={task._id} value={task._id} />
@@ -86,6 +96,8 @@ const ProjectCard = (props) => {
                                 <IoTrashOutline />
                             </div>
                         ))
+                        :
+                        <span><i>No tasks...</i></span>
                     }
                 </div>  
                 <p>Done</p>

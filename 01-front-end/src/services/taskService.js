@@ -26,13 +26,13 @@ const TaskService = {
         console.log(data)
         try {
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open('GET', `${base_url}/tasks/all`, false ); // false for synchronous request
+            xmlHttp.open('GET', `${base_url}/tasks/all?projectId=${data.projectId}`, false ); // false for synchronous request
             xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
             xmlHttp.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('app-token')}`);
-            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.send();
 
             const response = JSON.parse(xmlHttp.responseText);
-            
+            console.log(response)
             if (response.error) {
                 throw new Error({ message: response.Error } )
             }

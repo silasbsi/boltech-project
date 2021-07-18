@@ -37,10 +37,12 @@ router.post('/create', async (req, res) => {
 // });
 
 router.get('/all', async (req, res) => {
-    console.log(req.body);
+    const { projectId } = req.query;
     try {
-        const tasks = await Task.find(req.body)
-
+        
+        console.log('projectId', projectId)
+        const tasks = await Task.find({ projectId: projectId });
+        console.log('tasks', tasks)
         return res.send({ tasks });
 
     } catch (error) {
