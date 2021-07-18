@@ -1,20 +1,55 @@
 import React, { useState } from 'react';
-import './index.css';
 import { IoTrashOutline } from 'react-icons/io5'
 
 import ProjectService from '../../services/projectService';
+import TaskService from '../../services/taskService';
 
 import { GoPencil } from 'react-icons/go'
+import { useEffect } from 'react';
+
+import './index.css';
+
 const ProjectCard = (props) => {
-    const { name } = props.project;
+    const { name, _id } = props.project;
     const [changeTitle, setChangeTitle] = useState(false);
-    const [newTask, setNewTask] = useState('');
+    const [newTaskDescription, setNewTaskDescription] = useState('');
     const [title, setTitle] = useState('');
+    const [tasks, setTasks] = useState(null);
 
     const handleTitleOnBlur= () => {
-        
+        const payload = {
+            projectId: _id,
+            projectTitle: title
+        };
+
+        ProjectService.update(payload);
+
         setChangeTitle(!changeTitle);
+
     }
+
+    const handleAddTask = () => {
+        const payload = {
+            projectId: _id,
+            taskDescription: newTaskDescription
+        };
+        
+        const response = TaskService.create(payload);
+
+        if (response) {
+            setTasks([...tasks, response.task])
+        }
+    }
+
+
+    useEffect(() => {
+        setTitle(name);
+
+        const payload = { projectId: _id};
+        const allTasks = TaskService.all(payload)
+        console.table(allTasks.tasks);
+        setTasks(allTasks.tasks);
+    }, [])
 
     return (
         <div className="project-card">
@@ -31,11 +66,11 @@ const ProjectCard = (props) => {
                             autoFocus={true}
                         />
                         :
-                        <span>{name}</span>
+                        <span className="project-card-title-span" title={title}>{title}</span>
                 }
                 <div>
-                    <GoPencil onClick={() => setChangeTitle(!changeTitle)} />
-                    <IoTrashOutline />
+                    <GoPencil className="project-card-icons" onClick={() => setChangeTitle(!changeTitle)} />
+                    <IoTrashOutline className="project-card-icons" />
                 </div>
             </div>
             <div>
@@ -43,31 +78,15 @@ const ProjectCard = (props) => {
                 <p>To Do</p>
 
                 <div className="todo-list">
-                    <div className="list-item">
-                        <input type="checkbox" id="01" name="01" value="01" />
-                        <label for="01">Lorem ipsum dolor sit amet</label>
-                        <IoTrashOutline />
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="02" name="02" value="02" />
-                        <label for="02">Lorem ipsum dolor sit amet</label>
-                        <IoTrashOutline />
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="03" name="03" value="03" />
-                        <label for="03">Lorem ipsum dolor sit amet</label>
-                        <IoTrashOutline />
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="04" name="04" value="04" />
-                        <label for="04">Lorem ipsum dolor sit amet</label>
-                        <IoTrashOutline />
-                    </div>
-                    <div className="list-item">
-                        <input type="checkbox" id="05" name="05" value="05" />
-                        <label for="05">Lorem ipsum dolor sit amet</label>
-                        <IoTrashOutline />
-                    </div>
+                    {
+                        tasks?.map(task => (
+                            <div key={task._id} className="list-item">
+                                <input type="checkbox" id={task._id} name={task._id} value={task._id} />
+                                <label for={task._id}>{task.description}</label>
+                                <IoTrashOutline />
+                            </div>
+                        ))
+                    }
                 </div>  
                 <p>Done</p>
 
@@ -93,11 +112,12 @@ const ProjectCard = (props) => {
                 <div className="project-card-footer">
                     <input 
                         type="text" 
-                        value={newTask} 
-                        onChange={(e) => setNewTask(e.target.value)} 
+                        value={newTaskDescription} 
+                        onChange={(e) => setNewTaskDescription(e.target.value)} 
                         placeholder="Task"
-                        className="new-task-input" />
-                    <button className="new-task-button">Add</button>
+                        className="new-task-input" 
+                    />
+                    <button className="new-task-button" onClick={handleAddTask}>Add</button>
                 </div>
             </div>
         </div>

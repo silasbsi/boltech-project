@@ -7,24 +7,26 @@ import './index.css';
 
 const Dashboard = (props) => {
     const [newProject, setNewProject] = useState('');
-    const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState(null);
     
     const handleClick = () => {
         const payload = {
             name: newProject,
-            user: "60f2ea498b011d4fcc3e8790"
+            userId: "60f2ea498b011d4fcc3e8790"
         }
 
         const response = ProjectService.register(payload);
 
         setProjects([...projects, response.project]);
-
-        console.log(response);
     }
 
     useEffect(()=> {
-        console.table(projects);
-    }, [projects])
+        const payload = { 
+            userId: "60f2ea498b011d4fcc3e8790" 
+        };
+        const allProjects = ProjectService.all(payload);
+        setProjects(allProjects.projects)
+    }, [])
     
     return (
         <>

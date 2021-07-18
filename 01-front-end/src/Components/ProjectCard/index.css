@@ -30,6 +30,17 @@
     font-size: 14px;
 }
 
+.project-card .project-card-header .project-card-title-span {
+    white-space: nowrap; 
+    width: 250px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.project-card .project-card-header .project-card-icons {
+    cursor: pointer;
+}
+
 .project-card .project-card-content {
     margin: 10px 10px 0px 10px;
     padding-bottom: 10px;
