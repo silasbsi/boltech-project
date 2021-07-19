@@ -1,6 +1,6 @@
 # boltech-project
 
-Install node.js and mongodb
+Install **node.js** and **mongodb**
 
 ## Front-end project
 
