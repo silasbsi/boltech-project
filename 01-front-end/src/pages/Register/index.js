@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserService from '../../services/userService';
 
+import { useToasts } from 'react-toast-notifications';
+
 import "./index.css"
 
 const Register = () => {
@@ -12,26 +14,39 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
+    const { addToast, removeAllToasts } = useToasts();
+
     const handleSubmit = (e) => {      
         e.preventDefault();
-
-        const payload = {
-            email,
-            password,
-            name,
-        }
         
-        const response = UserService.register(payload);
+        if (email || password || name) {
+            const payload = {
+                email,
+                password,
+                name,
+            }
+            
+            const response = UserService.register(payload);
 
-        if (response.user) {
-            window.location.href = "/";
+            if (response.user) {
+                addToast('Registred Successfully', { appearance: 'success' });
+            }
+            else {
+                addToast(response?.error, { appearance: 'error' });
+            }
+            
+            setTimeout(() => window.location.href = "/", 3500);
+        }
+        else {
+            addToast('All fields is required', { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
         }
     }
     
     const validations = {
         name: (e) => {
             const name = e.target.value;
-            console.log(name)
+            
             if (name === "") {
                 setNameError('The name field is required');
                 return;
@@ -43,7 +58,7 @@ const Register = () => {
         email: (e) => {
             const email = e.target.value;
     
-            const emailValidate = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const emailValidate = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     
             if (!emailValidate.test(email)) {
                 setEmailError('Invalid email');

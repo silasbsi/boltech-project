@@ -12,14 +12,10 @@ const ProjectService = {
 
             const response = JSON.parse(xmlHttp.responseText);
             
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
-
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -32,14 +28,10 @@ const ProjectService = {
 
             const response = JSON.parse(xmlHttp.responseText);
             
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
-
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -51,15 +43,11 @@ const ProjectService = {
             xmlHttp.send(JSON.stringify(data));
 
             const response = JSON.parse(xmlHttp.responseText);
-            
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
 
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -72,15 +60,11 @@ const ProjectService = {
             xmlHttp.send(JSON.stringify(data));
 
             const response = JSON.parse(xmlHttp.responseText);
-            
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
 
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     }
 }

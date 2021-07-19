@@ -4,7 +4,9 @@ import { AiOutlineDatabase } from "react-icons/ai";
 import { GoPencil } from 'react-icons/go'
 import ProjectService from '../../services/projectService';
 import TaskService from '../../services/taskService';
-
+import { useToasts } from 'react-toast-notifications';
+import TodoTasks from './TodoTasks';
+import DoneTasks from './DoneTasks';
 import './index.css';
 
 const ProjectCard = (props) => {
@@ -20,13 +22,20 @@ const ProjectCard = (props) => {
     const [todoTasks, setTodoTasks] = useState(null);
     const [doneTasks, setDonetasks] = useState(null);
 
+    const { addToast, removeAllToasts } = useToasts();
+
     const handleTitleOnBlur= () => {
         const payload = {
             projectId: _id,
             projectTitle: title
         };
 
-        ProjectService.update(payload);
+        const response = ProjectService.update(payload);
+
+        if (response?.error) {
+            addToast(response?.error, { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
+        }
 
         setChangeTitle(!changeTitle);
     }
@@ -40,8 +49,11 @@ const ProjectCard = (props) => {
             
             const response = TaskService.create(payload);
 
-            if (response.task) {
+            if (response?.task) {
                 setTodoTasks([...todoTasks, response.task])
+            } else {
+                addToast(response?.error, { appearance: 'error' });
+                setTimeout(() => removeAllToasts(), 3000);
             }
 
             setNewTaskDescription('');
@@ -62,9 +74,12 @@ const ProjectCard = (props) => {
         
         const response = TaskService.delete(payload);
         
-        if (response.taskId) {
+        if (response?.taskId) {
             const remainingTasks = todoTasks?.filter(task => task._id !== response.taskId);
             setTodoTasks(remainingTasks)
+        } else {
+            addToast(response?.error, { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
         }
     }
 
@@ -76,7 +91,7 @@ const ProjectCard = (props) => {
         
         const response = TaskService.finish(payload);
         
-        if (response.task) {
+        if (response?.task) {
             const remainingTodoTasks = todoTasks?.filter(task => task._id !== response.task._id);
             setTodoTasks(remainingTodoTasks);
             
@@ -84,8 +99,10 @@ const ProjectCard = (props) => {
                 setDonetasks([...doneTasks, response.task]);
             } else {
                 setDonetasks(response.task);
-            }
-            
+            }            
+        } else {
+            addToast(response?.error, { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
         }
     }
 
@@ -105,9 +122,7 @@ const ProjectCard = (props) => {
             setDonetasks(doneTasksList);
             setTodoTasks(todoTasksList);
         }
-        
-        
-    }, [])
+    }, [_id])
 
     return (
         <div className="project-card">
@@ -121,11 +136,14 @@ const ProjectCard = (props) => {
                             value={title}
                             placeholder={name}
                             onBlur={handleTitleOnBlur}
-                            onent={handleTitleOnBlur}
                             autoFocus={true}
+                            onKeyUp={(e) => e.keyCode === 13 ? handleTitleOnBlur() : null}
                         />
                         :
-                        <span className="project-card-title-span" title={`${title} | Creation date: ${new Date(createdDate).toLocaleString("en-EN")}`}>{title}</span>
+                        <span 
+                            className="project-card-title-span" 
+                            title={`${title} | Creation date: ${new Date(createdDate).toLocaleString("en-EN")}`}
+                        >{title}</span>
                 }
                 <div>
                     <GoPencil className="project-card-icons" onClick={() => setChangeTitle(!changeTitle)} />
@@ -139,15 +157,7 @@ const ProjectCard = (props) => {
                     {todoTasks?.length > 0 ?
                         todoTasks.map(task => (
                             <div key={task._id} className="list-item" title={`${task.description} | Creation date: ${new Date(task.createdDate).toLocaleString("en-EN")}`}>
-                                <input 
-                                    type="checkbox" 
-                                    id={task._id} 
-                                    name={task._id} 
-                                    value={task._id} 
-                                    onChange={() => handleCheckboxClick(_id, task._id)} 
-                                />
-                                <label for={task._id}>{task.description}</label>
-                                <IoTrashOutline onClick={() => handleTaskDelete(_id, task._id)}/>
+                                <TodoTasks task={task} handleCheckboxClick={handleCheckboxClick} handleTaskDelete={handleTaskDelete} projectId={_id} />
                             </div>
                         ))
                         :
@@ -164,15 +174,7 @@ const ProjectCard = (props) => {
                     {doneTasks?.length > 0 ?
                         doneTasks.map(task => (
                             <div key={task._id}  className="list-item" title={`${task.description} | Creation date: ${new Date(task.createdDate).toLocaleString("en-EN")} | Finish date: ${new Date(task.finishedDate).toLocaleString("en-EN")}`}>
-                                <input 
-                                    type="checkbox" 
-                                    id={task._id} 
-                                    name={task._id} 
-                                    value={task._id} 
-                                    checked 
-                                    disabled 
-                                />
-                                <label for={task._id}>{task.description}</label>
+                                <DoneTasks task={task} />
                             </div>
                         ))
                         :
@@ -192,6 +194,7 @@ const ProjectCard = (props) => {
                         onChange={(e) => setNewTaskDescription(e.target.value)} 
                         placeholder="Task"
                         className="new-task-input" 
+                        onKeyUp={(e) => e.keyCode === 13 ? handleAddTask() : null}
                     />
                     <button className="new-task-button" onClick={handleAddTask}>Add</button>
                 </div>

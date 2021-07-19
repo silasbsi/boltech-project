@@ -11,14 +11,10 @@ const TaskService = {
 
             const response = JSON.parse(xmlHttp.responseText);
             
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
-
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -30,15 +26,11 @@ const TaskService = {
             xmlHttp.send();
 
             const response = JSON.parse(xmlHttp.responseText);
-            
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
 
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -51,14 +43,10 @@ const TaskService = {
 
             const response = JSON.parse(xmlHttp.responseText);
             
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
-
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     },
 
@@ -71,10 +59,22 @@ const TaskService = {
 
             const response = JSON.parse(xmlHttp.responseText);
             
-            if (response.error) {
-                throw new Error(response.Error)
-            }
+            return response;
 
+        } catch(err) {
+            console.log(err)
+        }
+    },
+
+    update: function (data) {
+        try {
+            xmlHttp.open( "PATCH", `${base_url}/tasks/update`, false ); // false for synchronous request
+            xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlHttp.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('app-token'));
+            xmlHttp.send(JSON.stringify(data));
+
+            const response = JSON.parse(xmlHttp.responseText);
+            
             return response;
 
         } catch(err) {

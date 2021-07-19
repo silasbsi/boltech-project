@@ -4,21 +4,19 @@ const UserService = {
     login: function (data) {
         try {
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "POST", `${base_url}/auth/authenticate`, false ); // false for synchronous request
+            xmlHttp.open("POST", `${base_url}/auth/authenticate`, false ); // false for synchronous request
             xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xmlHttp.send(JSON.stringify(data));
 
             const response = JSON.parse(xmlHttp.responseText);
-
-            if (response.error) {
-                throw new Error({ message: response.Error } )
+            
+            if (!response.error) {
+                localStorage.setItem('app-token', response.token);
             }
-
-            localStorage.setItem('app-token', response.token);
 
             return response;
         } catch (err) {
-            console.log(err.message)
+            return err.message;
         }
     },
 
@@ -40,15 +38,11 @@ const UserService = {
             xmlHttp.send(JSON.stringify(data));
 
             const response = JSON.parse(xmlHttp.responseText);
-            
-            if (response.error) {
-                throw new Error({ message: response.Error } )
-            }
 
             return response;
 
         } catch(err) {
-            console.log(err.message)
+            console.log(err)
         }
     }
 }

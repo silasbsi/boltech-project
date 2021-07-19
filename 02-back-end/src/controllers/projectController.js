@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
         return res.send({ project });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error: creating new project: ${err}` });
+        return res.status(400).send({ error: 'Error: creating new project' });
     }
 });
 
@@ -32,7 +32,7 @@ router.patch('/update', async (req, res) => {
         return res.send({ project });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error updating project: ${err}` });
+        return res.status(400).send({ error: 'Error updating project' });
     }
 });
 
@@ -43,20 +43,19 @@ router.get('/all', async (req, res) => {
         return res.send({ projects });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error selecting project: ${err}` });
+        return res.status(400).send({ error: 'Error selecting project' });
     }
 });
 
 router.delete('/delete', async (req, res) => {
     const { projectId } = req.body;
     try {
-        console.log('delete', projectId);
         await Project.findByIdAndRemove(projectId);
         await Task.remove({ projectId });
         
         return res.send({ projectId });
     } catch (err) {
-        return res.status(400).send({ error: `Error deleting project: ${err}` });
+        return res.status(400).send({ error: 'Error deleting project' });
     }
 });
 

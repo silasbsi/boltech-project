@@ -3,29 +3,35 @@ import Navbar from '../../Components/Navbar';
 import ProjectCard from '../../Components/ProjectCard';
 import ProjectService from '../../services/projectService'
 import { AiOutlineDatabase } from "react-icons/ai";
+import { useToasts } from 'react-toast-notifications';
 
 import './index.css';
 
 const Dashboard = () => {
     const [newProject, setNewProject] = useState('');
     const [projects, setProjects] = useState(null);
-    const USER_ID = localStorage.getItem('userId');
+
+    const { addToast, removeAllToasts } = useToasts();
     
     const handleClick = () => {
         if (newProject) {
             const payload = {
                 name: newProject,
-                userId: USER_ID
+                userId: localStorage.getItem('userId')
             }
 
             const response = ProjectService.register(payload);
 
-            const allProjects = [...projects, response.project];
-
-            console.log(allProjects)
-            console.log(allProjects.reverse(a => a.createdDate))
+            if (response?.project) {
+                const allProjects = [...projects, response.project];
+                allProjects.reverse(a => a.createdDate);
             
-            setProjects(allProjects);
+                setProjects(allProjects);
+                setNewProject('');
+            } else {
+                addToast(response?.error, { appearance: 'error' });
+                setTimeout(() => removeAllToasts(), 3000);
+            }
         }
     }
 
@@ -36,20 +42,21 @@ const Dashboard = () => {
         
         const response = ProjectService.delete(payload);
 
-        if (response) {
+        if (response?.projectId) {
             const remainingProjects = projects?.filter(project => project._id !== response.projectId);
             setProjects(remainingProjects);
+        } else {
+            addToast(response?.error, { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
         }
     }
 
     useEffect(()=> {
         const payload = { 
-            body: {
-                userId: USER_ID
-            }
+            userId: localStorage.getItem('userId')
         };
         const allProjects = ProjectService.all(payload);
-        console.log(allProjects)
+        
         allProjects.projects.reverse(a => a.createdDate);
         setProjects(allProjects.projects)
     }, [])
@@ -86,6 +93,7 @@ const Dashboard = () => {
                             value={newProject}
                             onChange={e => setNewProject(e.target.value)}
                             placeholder="Project name"
+                            onKeyUp={(e) => e.keyCode === 13 ? handleClick() : null}
                         />
                         <button onClick={handleClick}>Create project</button>
                     </div>

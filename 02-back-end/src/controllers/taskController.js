@@ -15,7 +15,7 @@ router.post('/create', async (req, res) => {
         return res.send({ task });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error creating new task: ${err}` });
+        return res.status(400).send({ error: 'Error creating new task' });
     }
 });
 
@@ -31,7 +31,7 @@ router.patch('/finish', async (req, res) => {
         return res.send({ task });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error updating task: ${err}` });
+        return res.status(400).send({ error: 'Error finishing task' });
     }
 });
 
@@ -42,7 +42,7 @@ router.get('/all', async (req, res) => {
         return res.send({ tasks });
 
     } catch (err) {
-        return res.status(400).send({ error: `Error selecting tasks: ${err}` });
+        return res.status(400).send({ error: 'Error selecting tasks' });
     }
 });
 
@@ -53,7 +53,23 @@ router.delete('/delete', async (req, res) => {
         
         return res.send({ taskId });
     } catch (err) {
-        return res.status(400).send({ error: `Error deleting task: ${err}` });
+        return res.status(400).send({ error: 'Error deleting task' });
+    }
+});
+
+router.patch('/update', async (req, res) => {
+    const { projectId, taskId, description } = req.body;
+    
+    try {
+        const task = await Task.findOne({ projectId, _id: taskId })
+          
+        task.description = description;
+        await task.save();
+
+        return res.send({ task });
+
+    } catch (err) {
+        return res.status(400).send({ error: 'Error updating task description' });
     }
 });
 

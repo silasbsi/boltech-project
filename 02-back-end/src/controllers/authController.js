@@ -30,13 +30,13 @@ router.post('/register', async (req, res) => {
             token: generatetoken({ id: user.id })
         });
     } catch (err) {
-        return res.status(400).send({ error: `Error resgistration failed: ${err}` });
+        return res.status(400).send({ error: 'Error resgistration failed' });
     }
 });
 
 router.post('/authenticate', async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body);
+    
     try {
         const user = await User.findOne({ email }).select('+password');
         
@@ -50,16 +50,12 @@ router.post('/authenticate', async (req, res) => {
 
         user.password = undefined;
         
-        console.log({ 
-            user, 
-            token: generatetoken({ id: user.id }) 
-        });
         return res.send({ 
             user, 
             token: generatetoken({ id: user.id }) 
         });
     } catch (err) {
-        return res.status(400).send({ error: `Error authentication failed: ${err}` });
+        return res.status(400).send({ error: 'Error authentication failed' });
     }
 });
 

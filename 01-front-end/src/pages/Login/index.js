@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserService from '../../services/userService';
+import { useToasts } from 'react-toast-notifications';
 
 import "./index.css"
 
 const Login = () => {
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(null);
     const [emailError, setEmailError] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(null);
     const [passwordError, setPasswordError] = useState('');
+
+    const { addToast, removeAllToasts } = useToasts();
 
     const handleSubmit = (e) => {  
         e.preventDefault();
@@ -18,11 +21,14 @@ const Login = () => {
         }
 
         const response = UserService.login(payload);
-        
+
         if (response?.user) {
             localStorage.setItem('userId', response.user._id);
             localStorage.setItem('userName', response.user.name);
             window.location.href = "/dashboard";
+        } else {
+            addToast(response?.error, { appearance: 'error' });
+            setTimeout(() => removeAllToasts(), 3000);
         }
     }
     
@@ -30,7 +36,7 @@ const Login = () => {
         email: (e) => {
             const email = e.target.value;
     
-            const emailValidate = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const emailValidate = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     
             if (!emailValidate.test(email)) {
                 setEmailError('Invalid email');
@@ -66,6 +72,7 @@ const Login = () => {
                         onBlur={(e) => validations.email(e)}
                         title={emailError ?? ''}
                         placeholder="Email"
+                        autoFocus={true}
                     />
                 </div>
                 <div className="login-group">
@@ -85,7 +92,7 @@ const Login = () => {
                     <button 
                         type="submit"
                         className={`login-btn 
-                            ${(emailError || passwordError) ? 'disabled': ''}`
+                            ${(emailError || passwordError || !email || !password) ? 'disabled': ''}`
                         }
                     >
                         Login
